@@ -1,0 +1,119 @@
+[build-system]
+requires = ["setuptools>=77"] # 77 is the first to accept an SPDX string in [project] license
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eval-detect-bench"
+version = "0.1.0"
+description = "Measures how well LLMs distinguish evaluation transcripts from real deployment transcripts (EvalDetectBench, Li et al. 2026)"
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "chahal-navi", email = "chahal-navi@users.noreply.github.com" }]
+requires-python = ">=3.12"
+dependencies = [
+    "inspect-ai>=0.3.262",
+    "inspect-evals-utils[huggingface]==0.3.0",
+    "numpy>=1.26",
+    "pyyaml>=6.0",
+]
+
+[project.urls]
+Repository = "https://github.com/chahal-navi/eval-detect-bench"
+Issues = "https://github.com/chahal-navi/eval-detect-bench/issues"
+
+# Registers the package so `inspect eval eval_detect_bench/<task>` finds its tasks.
+[project.entry-points.inspect_ai]
+eval_detect_bench = "eval_detect_bench"
+
+[dependency-groups]
+dev = [
+    "anthropic>=2.0", # with openai, the SDKs behind the `--model` commands in the READMEs
+    "basedpyright>=1.40",
+    "inspect-evals-lint==0.13.0",
+    "inspect-scout>=0.6.2", # used by agent_artefacts/trajectory_analysis/inspect_scout/
+    "openai>=3.4",
+    "pre-commit>=4.0",
+    "pytest>=8.4",
+    "pytest-asyncio",
+    "pytest-dotenv",
+    "pytest-inspect-evals[huggingface]==0.4.0",
+    "pytest-mock",
+    "ruff==0.17.4",
+    "scikit-learn>=1.5", # tests check the metrics against sklearn
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["eval_detect_bench*"] # examples/ stays out of the wheel
+
+[tool.setuptools.package-data]
+"*" = ["eval.yaml", "probe_questions.yaml"]
+
+# Layout preset: multi-eval (tests/<package>/, src/<package>/README.md) or
+# single-eval (flat tests/, README at the root). A hybrid repo keeps a preset and
+# sets tests_layout or readme_location here on top of it.
+[tool.inspect-evals-lint]
+preset = "single-eval"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-rA --durations=10 --color=yes"
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+log_level = "WARNING"
+env_files = [".env"]
+# Test gates and markers come from pytest-inspect-evals. Dataset-download tests
+# run by default; set RUN_DATASET_DOWNLOAD_TESTS=0 to skip them.
+inspect_evals_dataset_download = true
+
+[tool.basedpyright]
+pythonVersion = "3.12"
+typeCheckingMode = "standard"
+reportMissingTypeStubs = false
+exclude = [".venv", "agent_artefacts", "build"]
+
+[tool.ruff]
+line-length = 100
+src = ["src"]
+target-version = "py312"
+# *.md: ruff formats Python blocks in Markdown, and the README generator writes them its own way.
+extend-exclude = ["agent_artefacts", "*.md"]
+
+[tool.ruff.lint]
+preview = true
+extend-select = ["unspecified-encoding"] # unspecified-encoding (a preview rule)
+select = [
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # pyflakes
+    "I",     # isort
+    "UP",    # pyupgrade
+    "B",     # flake8-bugbear
+    "SIM",   # flake8-simplify
+    "D",     # pydocstyle
+    "C4",    # flake8-comprehensions
+    "PT",    # flake8-pytest-style
+    "PIE",   # flake8-pie
+    "DTZ",   # flake8-datetimez (timezone-aware datetimes)
+    "ISC",   # implicit-str-concat (catches missing commas)
+    "ASYNC", # flake8-async
+    "N",     # pep8-naming
+    "FURB",  # refurb (modernization)
+    "RUF",   # ruff-specific rules
+    "PLE",   # pylint errors
+    "PLW",   # pylint warnings
+]
+ignore = [
+    "line-too-long",   # line-too-long: the formatter owns line length
+    "D10",    # missing docstrings
+    "missing-terminal-punctuation",   # first-line punctuation
+    "single-line-implicit-string-concatenation", # single-line implicit concat conflicts with the formatter
+    "unused-async", # preview rule: Inspect solvers and scorers must be async even when they don't await
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"**/{tests,examples}/**" = ["D", "magic-value-comparison"] # tests and examples skip docstring linting

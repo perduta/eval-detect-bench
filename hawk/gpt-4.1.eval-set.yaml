@@ -1,0 +1,19 @@
+# EvalDetectBench full replication on Hawk, GPT-4.1 as judge (paper AUROC 0.784).
+# OpenRouter, pinned snapshot: the same route the paper used. 738 transcripts x 5 probes.
+#   hawk eval-set run hawk/gpt-4.1.eval-set.yaml
+name: edb-gpt41
+tasks:
+  - package: "git+https://github.com/chahal-navi/eval-detect-bench@90498bf6a6497b14d108b0c3c588b0593f3212aa"
+    name: eval_detect_bench
+    items:
+      - name: eval_detect_bench
+models:
+  - package: openai
+    name: openai
+    items:
+      - name: openrouter/openai/gpt-4.1-2025-04-14
+epochs: 1
+max_retries: 5
+runner:
+  cpu: "1"
+  memory: 4Gi

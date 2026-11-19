@@ -1,0 +1,23 @@
+# EvalDetectBench full replication on Hawk, Claude Haiku 4.5 as judge (paper AUROC 0.758).
+# The paper used the direct Anthropic API; Hawk reaches Claude through OpenRouter.
+# claude_placeholder reproduces the paper's direct-route prompts. Remaining difference:
+# tool schemas aren't sent over OpenRouter (see README). 738 transcripts x 5 probes.
+#   hawk eval-set run hawk/claude-haiku-4.5.eval-set.yaml
+name: edb-haiku45
+tasks:
+  - package: "git+https://github.com/chahal-navi/eval-detect-bench@90498bf6a6497b14d108b0c3c588b0593f3212aa"
+    name: eval_detect_bench
+    items:
+      - name: eval_detect_bench
+        args:
+          claude_placeholder: true
+models:
+  - package: openai
+    name: openai
+    items:
+      - name: openrouter/anthropic/claude-4.5-haiku-20251001
+epochs: 1
+max_retries: 5
+runner:
+  cpu: "1"
+  memory: 4Gi
