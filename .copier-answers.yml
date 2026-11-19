@@ -1,0 +1,16 @@
+# This file is auto-generated and updated by Copier; do not edit by hand.
+# Run `copier update` to pull in template changes.
+_commit: v2.0.0
+_src_path: gh:Generality-Labs/inspect-evals-template
+author_email: chahal-navi@users.noreply.github.com
+author_name: chahal-navi
+eval_description: Measures how well LLMs distinguish evaluation transcripts from real
+    deployment transcripts (EvalDetectBench, Li et al. 2026)
+eval_name: eval-detect-bench
+github_owner: chahal-navi
+github_username: chahal-navi
+include_examples: false
+layout: single-eval
+license: MIT
+python_version: '3.12'
+use_template_update: true

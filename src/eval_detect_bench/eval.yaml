@@ -1,0 +1,17 @@
+title: "EvalDetectBench: Measuring Evaluation Awareness in Frontier Language Models"
+description: |
+  Measures evaluation awareness: whether a judge model can tell transcripts of evaluation
+  benchmarks apart from transcripts of real deployment. Each transcript (chat or agentic) is
+  followed by closed-ended probe questions; the share of probes answering "evaluation" gives
+  the transcript's P(eval), and the headline metric is AUROC over evaluation vs deployment
+  transcripts. Ships the paper's per-judge transcript pools (about 740 transcripts each,
+  29 evaluation benchmarks and 12 deployment sources), its 20-probe corpus and the probe
+  sets selected for each of the 12 judges, plus the calibration split and exhaustive search
+  used to select probes for a new judge.
+group: Scheming
+contributors:
+  - chahal-navi
+version: "1-A"
+tasks:
+  - name: eval_detect_bench
+    dataset_samples: 3690
